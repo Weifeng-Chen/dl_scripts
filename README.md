@@ -6,7 +6,7 @@ Some useful tools for deep learning implement.
 
 # Usage
 
-## yolo2coco.py
+#### yolo2coco.py
 
 Transform `yolo` dataset format into `coco` dataset format. **you need to modify your dataset to suit this script. **
 
@@ -28,4 +28,8 @@ Transform `yolo` dataset format into `coco` dataset format. **you need to modify
 `python yolo2coco.py --root_path $ROOT_PATH`
 
 Then, you will get a new directory `annotations`, which include ``train.json` `val.json` `test.json` （the dataset was split into **8: 1: 1**）
+
+#### dataset_mean_var.py
+
+set the `filepath` and run directly.
 
