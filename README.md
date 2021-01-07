@@ -2,34 +2,39 @@
 
 Some useful tools for deep learning implement.
 
-
-
 # Usage
 
-#### yolo2coco.py
+### yolo2coco.py
 
-Transform `yolo` dataset format into `coco` dataset format. **you need to modify your dataset to suit this script. **
+将数据集修改成YOLO格式。$ROOT_PATH是根目录，文件结构如下：
 
-`$ROOT_PATH` is the path to put your data. It should be like the following tree:
-
+```bash
 └── $ROOT_PATH
-    ├── classes.txt
-    ├── images
-    └── labels
 
-- `classes.txt` contains all classes. One class per line.
+  ├── classes.txt
 
-- Directory `images` contains all images for train, valid, test. (format:`jpg` )
+  ├── images
 
-- Directory `labels` contains all labels. Each label has the same name as the image.(format: `txt`)
+  └──labels
+```
 
-**RUN**：
+- `classes.txt` 是类的声明，一行一类。
 
-`python yolo2coco.py --root_path $ROOT_PATH`
+-  `images` 目录包含所有图片 (format:`jpg` )
 
-Then, you will get a new directory `annotations`, which include ``train.json` `val.json` `test.json` （the dataset was split into **8: 1: 1**）
+- `labels` 目录包含所有标签(与图片同名，format: `txt`)
 
-#### dataset_mean_var.py
+配置好后，执行：`python yolo2coco.py --root_path $ROOT_PATH`
 
-set the `filepath` and run directly.
+，然后你就能看见生成的 `annotations`, 包括 ``train.json` `val.json` `test.json` （默认被分为 **8: 1: 1**）
+
+- --root_path 输入根目录$ROOT_PATH的位置。
+
+### dataset_mean_var.py
+
+执行：`python yolo2coco.py --file_path $IMAGE_PATH --step $PICK_INTERVAL`
+
+- --file_path是图片地址。
+
+- --step是选择图片的间隔，如间隔为10，则只计算1/10。
 

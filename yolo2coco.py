@@ -1,5 +1,6 @@
 """
 YOLO 格式的数据集转化为 COCO 格式的数据集
+--root_path 输入根路径
 """
 
 import os
