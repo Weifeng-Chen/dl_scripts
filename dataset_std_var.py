@@ -12,7 +12,7 @@ import cv2
 import argparse
 
 parser = argparse.ArgumentParser("ROOT SETTING")
-parser.add_argument('--file_path',type=str,default='data/pedestrian/images' , help="root path of images and labels")
+parser.add_argument('--file_path',type=str,default='images' , help="root path of images and labels")
 parser.add_argument('--step',type=int,default=1 , help="whether to pick interval images")
 
 arg = parser.parse_args()
