@@ -1,6 +1,7 @@
 """
 YOLO 格式的数据集转化为 COCO 格式的数据集
 --root_path 输入根路径
+--save_name 保存文件的名字(没有random_split时使用)
 """
 
 import os
@@ -11,12 +12,14 @@ from sklearn.model_selection import train_test_split
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--root_path',type=str,default='yolo_data', help="root path of images and labels")
+parser.add_argument('--root_path',type=str, help="root path of images and labels")
 parser.add_argument('--random_split',action='store_true', help="random split the dataset, default ratio is 8:1:1")
+parser.add_argument('--save_name',type=str,default='train.json',action='store_true', help="if not split the dataset, specify where to save the result")
 arg = parser.parse_args()
 
 
 def train_test_val_split(img_paths,ratio_train=0.8,ratio_test=0.1,ratio_val=0.1):
+    # 这里可以修改数据集划分的比例。
     assert int(ratio_train+ratio_test+ratio_val) == 1
     train_img, middle_img = train_test_split(img_paths,test_size=1-ratio_train, random_state=233)
     ratio=ratio_val/(1-ratio_train)
@@ -53,15 +56,13 @@ def yolo2coco(root_path, random_split):
         dataset = {'categories': [], 'annotations': [], 'images': []}
         for i, cls in enumerate(classes, 1):
             dataset['categories'].append({'id': i, 'name': cls, 'supercategory': 'mark'})
-
-    
     
     # annotations id
     ann_id_cnt = 0
 
     # ---开始转换数据---
     for k, index in enumerate(tqdm(indexes)):
-        txtFile = index.replace('images','txt').replace('jpg','txt')
+        txtFile = index.replace('images','txt').replace('.jpg','.txt').replace('.png','.txt')
 
         # 读取图片，得到图像的宽和高
         im = cv2.imread(os.path.join(root_path, 'images/') + index)
@@ -96,10 +97,11 @@ def yolo2coco(root_path, random_split):
                 h = float(label[4])
 
                 # convert x,y,w,h to x1,y1,x2,y2
-                imagePath = os.path.join(originImagesDir,
-                                            txtFile.replace('txt', 'jpg'))
-                image = cv2.imread(imagePath)
-                H, W, _ = image.shape
+                # imagePath = os.path.join(originImagesDir,
+                                            # txtFile.replace('txt', 'jpg'))
+                # image = cv2.imread(imagePath)
+                # H, W, _ = image.shape
+                H, W, _ = im.shape
                 x1 = (x - w / 2) * W
                 y1 = (y - h / 2) * H
                 x2 = (x + w / 2) * W
@@ -136,11 +138,10 @@ def yolo2coco(root_path, random_split):
                     json.dump(test_dataset, f)
             print('Save annotation to {}'.format(json_name))
     else:
-        json_name = os.path.join(root_path, 'annotations/train.json')
+        json_name = os.path.join(root_path, 'annotations/{}'.format(arg.save_name))
         with open(json_name, 'w') as f:
             json.dump(dataset, f)
             print('Save annotation to {}'.format(json_name))
-
 
 if __name__ == "__main__":
     root_path = arg.root_path
