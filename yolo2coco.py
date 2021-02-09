@@ -14,7 +14,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--root_path',type=str, help="root path of images and labels")
 parser.add_argument('--random_split',action='store_true', help="random split the dataset, default ratio is 8:1:1")
-parser.add_argument('--save_name',type=str,default='train.json',action='store_true', help="if not split the dataset, specify where to save the result")
+parser.add_argument('--save_name',type=str,default='train.json', help="if not split the dataset, specify where to save the result")
 arg = parser.parse_args()
 
 
