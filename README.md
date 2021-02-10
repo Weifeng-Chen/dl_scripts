@@ -1,7 +1,6 @@
 # Tools
 
 Some useful tools for computer vision/deep learning.
-（I will update on a regular basis）
 
 # Usage
 
@@ -25,19 +24,35 @@ Some useful tools for computer vision/deep learning.
 
 - `labels` 目录包含所有标签(与图片**同名**的`txt`格式数据)
 
-配置好后，执行：`python yolo2coco.py --root_path $ROOT_PATH --random_split` ，然后你就能看见生成的 `annotations`,文件夹，包含 ``train.json` `val.json` `test.json` （默认随机划分成8:1:1），如果不想划分数据集，则不要输入`random_split`这个参数。
+配置好后，执行：`python yolo2coco.py --root_dir $ROOT_PATH ` ，然后你就能看见生成的 `annotations`,文件夹。如果有添加`--random_split`参数，则输出在`annotations`文件夹下包含 ``train.json` `val.json` `test.json` （默认随机划分成8:1:1），如果不想划分数据集，则不要输入`random_split`这个参数，然后指定--save_path（生成的`json`文件的名字，不指定默认保存为`train.json`）
 
 - `--root_path` 输入根目录$ROOT_PATH的位置。
 - `--random_split`  为划分参数，如果没有这个参数则只保存`train.json`文件
-- -`-save_name` 如果不进行随机划分，可利用此参数指定输出文件的名字，默认保存为`train.json`
+- -`-save_path 如果不进行随机划分，可利用此参数指定输出文件的名字，默认保存为`train.json`
+
+
+
+## coco2yolo.py
+
+读入coco数据集json格式的标注，输出可供yolo训练的标签。
+
+**需要注意的是，COCO格式的categories id 是不连续的**，这在yolo读取的时候会出问题，所以需要重新映射一下，这个代码会按id从小到大映射到0~79之间。
+
+执行：`python coco2yolo.py --json_path $JSON_FILE_PATH --save_path $LABEL_SAVE_PATH`
+
+- `$JSON_FILE_PATH`是json文件的地址。
+- `$JSON_FILE_PATH`是输出目录（默认为工作目录下的`./labels`目录。
+
+
 
 ## dataset_mean_var.py
 
 执行：`python yolo2coco.py --file_path $IMAGE_PATH --step $INTERVAL`
 
 - --file_path 输入图片地址。
-
 - --step 可选，默认为1，选择图片的间隔，如间隔为10，则只计算1/10。
+
+
 
 ## split_yolo_dataset.py
 
@@ -45,7 +60,9 @@ Some useful tools for computer vision/deep learning.
 
 执行：`python split_dataset_yolo.py --root_path $ROOT_PATH`
 
-## vis_yolo_gt_pred.py
+
+
+## vis_yolo_gt_dt.py
 
 同时把GT和预测结果可视化在同一张图中。`$DT_DIR`是预测结果标签地址，必须是和GT同名的标签。`$ROOT_PATH`文件目录：
 
@@ -59,7 +76,9 @@ Some useful tools for computer vision/deep learning.
   └── labels
 ```
 
-执行：`python vis_yolo_gt_pred.py --root_path $ROOT_PATH --dt_path $DT_DIR`后生成在`outputs`文件夹中。（`preds`和`labels`文件夹都是可选的，没有的话就不画。）
+执行：`python vis_yolo_gt_pred.py --root $ROOT_PATH --dt $DT_DIR`后生成在`outputs`文件夹中。
+
+
 
 ## coco_eval.py
 
@@ -71,15 +90,22 @@ Some useful tools for computer vision/deep learning.
 - `--dt` 同样检测网络生成的预测，使用cocoapi中`loadRes`来加载，所以需要有相应格式的检测结果。
 - `--yolov5` 将官方代码中生成的结果转换成适配cocoapi的结果。
 
-## modify_yolo_cls.py
 
-用于修改yolo数据集中的类别。自用。
 
 ## cat_img.py
 
-左右拼接2张图片，方便可视化对比模型的效果。
+左右拼接2个文件夹下同名的图片，方便可视化对比模型的效果。
+
+
 
 ## grid_extract.py
 
 1. 网格化输出各个位置目标的分布情况。
 2. 依据条件提取特定区域的样本。
+
+
+
+## voc2coco_rotate.py
+
+将旋转框的VOC标注转为COCO格式的。（范围为0~pi）
+

@@ -1,3 +1,9 @@
+"""
+VOC 格式的数据集转化为 COCO 格式的数据集。（旋转） 生成的旋转框是以中心点顺时针旋转的角度（0~pi）
+--xml_path 输入根路径
+--save_path 保存文件的名字(没有random_split时使用)
+"""
+
 import json
 import cv2
 import numpy as np
@@ -5,7 +11,13 @@ import glob
 import PIL.Image
 import os,sys
 import math
- 
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--xml_path', default='./voc_ro',type=str, help="coco format(json)")
+parser.add_argument('--save_path', default='train.json', type=str, help="save to a json file")
+arg = parser.parse_args()
+
 class PascalVOC2coco(object):
     def __init__(self, xml=[], save_json_path='./new.json'):
         '''
@@ -185,8 +197,7 @@ class PascalVOC2coco(object):
         # 保存json文件
         json.dump(self.data_coco, open(self.save_json_path, 'w'), indent=4)  # indent=4 更加美观显示
  
- 
-xml_file = glob.glob('./voc_ro/*.xml')
-# xml_file=['./Annotations/000032.xml']
-#xml_file=['00000007_05499_d_0000037.xml']
-PascalVOC2coco(xml_file, 'train.json')
+if __name__ == '__main__':
+    xml_path = arg.xml_path
+    xml_file = glob.glob(os.path.join(xml_path,'*.xml'))
+    PascalVOC2coco(xml_file, arg.save_path)
