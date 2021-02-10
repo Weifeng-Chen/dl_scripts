@@ -10,8 +10,8 @@ from tqdm import tqdm
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--json_path', default='./instances_val2017.json',type=str, help="coco format(json)")
-parser.add_argument('--save_path', default='./labels', type=str, help="specify where to save the output labels")
+parser.add_argument('--json_path', default='./instances_val2017.json',type=str, help="input: coco format(json)")
+parser.add_argument('--save_path', default='./labels', type=str, help="specify where to save the output dir of labels")
 arg = parser.parse_args()
 
 def convert(size, box):

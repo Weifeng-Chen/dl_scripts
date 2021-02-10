@@ -1,6 +1,6 @@
 """
 YOLO 格式的数据集转化为 COCO 格式的数据集
---root_path 输入根路径
+--root_dir 输入根路径
 --save_path 保存文件的名字(没有random_split时使用)
 --random_split 有则会随机划分数据集，然后再分别保存为3个文件。
 """
@@ -13,9 +13,9 @@ from sklearn.model_selection import train_test_split
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--root_path', default='./data',type=str, help="root path of images and labels")
+parser.add_argument('--root_dir', default='./data',type=str, help="root path of images and labels, include ./images and ./labels and classes.txt")
+parser.add_argument('--save_path', type=str,default='./train.json', help="if not split the dataset, give a path to a json file")
 parser.add_argument('--random_split', action='store_true', help="random split the dataset, default ratio is 8:1:1")
-parser.add_argument('--save_path', type=str,default='./train.json', help="if not split the dataset, specify where to save the result")
 arg = parser.parse_args()
 
 def train_test_val_split(img_paths,ratio_train=0.8,ratio_test=0.1,ratio_val=0.1):
@@ -130,7 +130,7 @@ def yolo2coco(root_path, random_split):
             print('Save annotation to {}'.format(json_name))
 
 if __name__ == "__main__":
-    root_path = arg.root_path
+    root_path = arg.root_dir
     assert os.path.exists(root_path)
     random_split = arg.random_split
     print("Loading data from ",root_path,"\nWhether to split the data:",random_split)

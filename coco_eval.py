@@ -7,7 +7,7 @@ import os
 parser = argparse.ArgumentParser()
 parser.add_argument("--gt", type=str, help="Assign the groud true path.", default=None)
 parser.add_argument("--dt", type=str, help="Assign the detection result path.", default=None)
-parser.add_argument("--yolov5",action='store_true',help="for yolov5", default=None)
+parser.add_argument("--yolov5",action='store_true',help="fix yolov5 output bug", default=None)
 
 args = parser.parse_args()
 
@@ -17,10 +17,11 @@ def transform_yolov5_result(result):
     output_dts = []
     for dt in dts:
         dt['image_id'] = filename2id[dt['image_id']+'.jpg']
-        dt['category_id'] += 1 # 标号对应好
+        dt['category_id'] # id对应好，coco格式和yolo格式的category_id可能不同。
         output_dts.append(dt)
     with open('temp.json', 'w') as f:
         json.dump(output_dts, f)
+
 
 if __name__ == '__main__':
     cocoGt = COCO(args.gt)

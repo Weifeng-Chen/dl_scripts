@@ -8,18 +8,18 @@ from tqdm import tqdm
 import numpy as np
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--root_path',type=str , help="which should include ./images and ./labels and classes.txt")
-parser.add_argument('--dt_path',type=str ,help="yolo format results of detection, include ./labels")
+parser.add_argument('--root',type=str ,default='', help="which should include ./images and ./labels and classes.txt")
+parser.add_argument('--dt',type=str ,default='' , help="yolo format results of detection, include ./labels")
 parser.add_argument('--conf' , type=float ,default=0.5, help="visulization conf thres")
 arg = parser.parse_args()
 
-colorlist = [
-    # bgr
-    (0,0,255),
-    (0,128,255),
-    (0,255,0),
-    (255,0,0),
-]
+colorlist = []
+# 5^3种颜色。
+for i in range(25,256,50):
+    for j in range(25,256,50):
+        for k in range(25,256,50):
+            colorlist.append((i,j,k))
+# random.shuffle(colorlist)
 
 def plot_bbox(img_path, img_dir, out_dir, gt=None ,dt=None, cls2label=None, line_thickness=None):
     img = cv2.imread(os.path.join(img_dir, img_path))
@@ -27,6 +27,7 @@ def plot_bbox(img_path, img_dir, out_dir, gt=None ,dt=None, cls2label=None, line
     tl = line_thickness or round(0.002 * (width + height) / 2) + 1  # line/font thickness
     font = cv2.FONT_HERSHEY_SIMPLEX
     if gt:
+        tf = max(tl - 1, 1)  # font thickness
         with open(gt,'r') as f:
             annotations = f.readlines()
             # print(annotations)    
@@ -38,7 +39,8 @@ def plot_bbox(img_path, img_dir, out_dir, gt=None ,dt=None, cls2label=None, line
                 color = colorlist[cls]
                 c1, c2 = (int((x-w/2)*width),int((y-h/2)*height)), (int((x+w/2)*width), int((y+h/2)*height))
                 cv2.rectangle(img, c1, c2, color, thickness=tl*2, lineType=cv2.LINE_AA)
-                 
+                # 类别名称显示
+                cv2.putText(img, str(cls2label[cls]), (c1[0], c1[1] - 2), 0, tl / 4, color, thickness=tf, lineType=cv2.LINE_AA)
     if dt:
         with open(dt,'r') as f:
             annotations = f.readlines()
@@ -54,9 +56,9 @@ def plot_bbox(img_path, img_dir, out_dir, gt=None ,dt=None, cls2label=None, line
                         continue
                 elif len(ann) == 5:
                     cls,x,y,w,h = ann
-                color = colorlist[cls+2]
+                color = colorlist[len(colorlist) - cls - 1]
 
-                c1, c2 = (int((x-w/2)*width),int((y-h/2)*height)), (int((x+w/2)*width), int((y+h/2)*height))
+                c1, c2 = (int((x-w/2)*width), int((y-h/2)*height)), (int((x+w/2)*width), int((y+h/2)*height))
                 cv2.rectangle(img, c1, c2, color, thickness=tl, lineType=cv2.LINE_AA)
 
                 # # cls label
@@ -69,9 +71,8 @@ def plot_bbox(img_path, img_dir, out_dir, gt=None ,dt=None, cls2label=None, line
     cv2.imwrite(os.path.join(out_dir,img_path),img)
     
 if __name__ == "__main__":
-
-    root_path = arg.root_path
-    pred_path = arg.dt_path
+    root_path = arg.root
+    pred_path = arg.dt
     img_dir = os.path.join(root_path,'images')
     GT_dir = os.path.join(root_path,'labels')
     DT_dir = os.path.join(pred_path)
@@ -88,7 +89,7 @@ if __name__ == "__main__":
             classes = f.readlines()
             for i in range(len(classes)):
                 cls_dict[i] = classes[i].strip()
-            print(cls_dict)
+            print("class map:", cls_dict)
     if not os.path.exists(out_dir):
         os.mkdir(out_dir)
     
@@ -100,5 +101,5 @@ if __name__ == "__main__":
         if os.path.exists(os.path.join(DT_dir,each_img.replace('jpg','txt'))):
             dt = os.path.join(DT_dir,each_img.replace('jpg','txt'))
         
-        plot_bbox(each_img,img_dir, out_dir, gt, dt, cls2label=cls_dict)
+        plot_bbox(each_img, img_dir, out_dir, gt, dt, cls2label=cls_dict)
         
