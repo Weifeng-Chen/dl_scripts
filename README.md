@@ -36,7 +36,7 @@ Some useful tools for computer vision/deep learning.
 
 读入coco数据集json格式的标注，输出可供yolo训练的标签。
 
-**需要注意的是，COCO2017官方的数据集中categories id 是不连续的**，这在yolo读取的时候会出问题，所以需要重新映射一下，这个代码会按id从小到大映射到0~79之间。（如果）
+**需要注意的是，COCO2017官方的数据集中categories id 是不连续的**，这在yolo读取的时候会出问题，所以需要重新映射一下，这个代码会按id从小到大映射到0~79之间。（如果是自己的数据集，也会重新映射）
 
 执行：`python coco2yolo.py --json_path $JSON_FILE_PATH --save_path $LABEL_SAVE_PATH`
 
@@ -76,9 +76,11 @@ Some useful tools for computer vision/deep learning.
   └── labels
 ```
 
-执行：`python vis_yolo_gt_pred.py --root $ROOT_PATH --dt $DT_DIR`后生成在`outputs`文件夹中。
+执行：`python vis_yolo_gt_dt.py --root $ROOT_PATH --dt $DT_DIR`后生成在`outputs`文件夹中。
 
-
+- `classes.txt`和`images`必须有。
+- `labels`可以没有，那样就只展示`$DT_DIR`预测结果。
+- `$DT_DIR` 若没有输入，则只展示标签结果。
 
 ## coco_eval.py
 
