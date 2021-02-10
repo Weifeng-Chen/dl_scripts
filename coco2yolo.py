@@ -49,7 +49,8 @@ if __name__ == '__main__':
         img_width = img["width"]
         img_height = img["height"]
         img_id = img["id"]
-        ana_txt_name = filename.split(".")[0] + ".txt"  # 对应的txt名字，与jpg一致
+        head, tail = os.path.splitext(filename)
+        ana_txt_name = head + ".txt"  # 对应的txt名字，与jpg一致
         f_txt = open(os.path.join(ana_txt_save_path, ana_txt_name), 'w')
         for ann in data['annotations']:
             if ann['image_id'] == img_id:
