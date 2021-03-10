@@ -123,7 +123,7 @@ class PascalVOC2coco(object):
         annotation['segmentation'] = [list(map(float, self.getsegmentation()))]
         annotation['iscrowd'] = 0
         annotation['image_id'] = self.num + 1
-        annotation['area'] = 1920 * 1080             # 临时解决方案！！需要修改
+        annotation['area'] = 1920 * 1080             # 这个标注其实也没啥用-。-
         annotation['rbbox'] = self.bbox
         annotation['category_id'] = self.getcatid(self.supercategory)
         annotation['id'] = self.annID

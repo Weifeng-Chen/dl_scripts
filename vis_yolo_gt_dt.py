@@ -19,7 +19,7 @@ for i in range(25,256,50):
     for j in range(25,256,50):
         for k in range(25,256,50):
             colorlist.append((i,j,k))
-# random.shuffle(colorlist)
+random.shuffle(colorlist)
 
 def plot_bbox(img_path, img_dir, out_dir, gt=None ,dt=None, cls2label=None, line_thickness=None):
     img = cv2.imread(os.path.join(img_dir, img_path))
@@ -92,7 +92,10 @@ if __name__ == "__main__":
             print("class map:", cls_dict)
     if not os.path.exists(out_dir):
         os.mkdir(out_dir)
-    
+    if not os.path.exists(GT_dir):
+        print(f"WARNNING: {GT_dir} ,GT NOT Available!")
+    if not os.path.exists(DT_dir):
+        print(f"WARNNING: {DT_dir} ,DT NOT Available!")
     for each_img in tqdm(os.listdir(img_dir)):
         gt = None
         dt = None
