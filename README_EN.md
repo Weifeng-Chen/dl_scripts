@@ -42,6 +42,6 @@ Read the label in JSON format of coco dataset and output the label for Yolo trai
 
 Run: `python coco2yolo.py --json_path $JSON_FILE_PATH --save_path $LABEL_SAVE_PATH`
 
-- `$JSON_FILE_PATH`是json文件的地址。
-- `$JSON_FILE_PATH`是输出目录（默认为工作目录下的`./labels`目录。
+- `$JSON_FILE_PATH` path of json
+- `$JSON_FILE_PATH` output directory（defult is `./labels`)
 
