@@ -1,8 +1,8 @@
-
-## Useful tools for computer vision/deep learning.
-
+<h2 align="center">
+Useful tools for computer vision/deep learning.
+</h2>
 <h4 align="center">
-    <p><b>简体中文</b> | <a href="https://github.com/huggingface/transformers/">English</a><p>
+    <p><b>简体中文</b> | <a href="https://github.com/Weifeng-Chen/DL_tools/blob/main/README_EN.md">English</a><p>
 </h4>
 
 # Usage
