@@ -1,9 +1,11 @@
-# Tools
 
-Some useful tools for computer vision/deep learning.
+## Useful tools for computer vision/deep learning.
+
+<h4 align="center">
+    <p><b>简体中文</b> | <a href="https://github.com/huggingface/transformers/">English</a><p>
+</h4>
 
 # Usage
-
 ## yolo2coco.py
 
 将yolo格式数据集修改成coco格式。`$ROOT_PATH`是根目录，需要按下面的形式组织数据：
@@ -24,10 +26,11 @@ Some useful tools for computer vision/deep learning.
 
 - `labels` 目录包含所有标签(与图片**同名**的`txt`格式数据)
 
-配置好后，执行：`python yolo2coco.py --root_dir $ROOT_PATH ` ，然后你就能看见生成的 `annotations` 文件夹。如果有添加`--random_split`参数，则输出在`annotations`文件夹下包含 `train.json` `val.json` `test.json` （默认随机划分成8:1:1），如果不想划分数据集，则不要输入`random_split`这个参数，然后指定--save_path（生成的json文件的名字，不指定默认保存为`train.json`）
+配置好文件夹后，执行：`python yolo2coco.py --root_dir $ROOT_PATH ` ，然后你就能看见生成的 `annotations` 文件夹。
 
+**参数说明**
 - `--root_path` 输入根目录`$ROOT_PATH`的位置。
-- `--random_split`  为划分参数，如果没有这个参数则只保存`train.json`文件
+- `--random_split`  为划分参数，如果没有这个参数则只保存`train.json`文件。若指定`--random_split`参数，则输出在`annotations`文件夹下包含 `train.json` `val.json` `test.json` （默认随机划分成8:1:1）
 - `--save_path` 如果不进行随机划分，可利用此参数指定输出文件的名字，默认保存为`train.json`
 
 
