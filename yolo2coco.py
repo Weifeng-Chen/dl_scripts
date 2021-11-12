@@ -40,7 +40,7 @@ def train_test_val_split_by_files(img_paths, root_dir):
         assert os.path.exists(define_path)
         with open(define_path, 'r') as f:
             img_paths = f.readlines()
-            img_paths = [os.path.split(img_path.strip())[1] for img_path in img_paths]  # NOTE 取消这句备注可以读取绝对地址。
+            # img_paths = [os.path.split(img_path.strip())[1] for img_path in img_paths]  # NOTE 取消这句备注可以读取绝对地址。
             img_split.append(img_paths)
     return img_split[0], img_split[1], img_split[2]
 
