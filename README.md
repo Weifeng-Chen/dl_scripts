@@ -22,17 +22,17 @@ Useful tools for computer vision/deep learning.
 
 - `classes.txt` 是类的声明，一行一类。
 
--  `images` 目录包含所有图片 (目前支持`png`和`jpg`格式数据)
+- `images` 目录包含所有图片 (目前支持`png`和`jpg`格式数据)
 
 - `labels` 目录包含所有标签(与图片**同名**的`txt`格式数据)
 
-配置好文件夹后，执行：`python yolo2coco.py --root_dir $ROOT_PATH ` ，然后你就能看见生成的 `annotations` 文件夹。
+配置好文件夹后，执行：`python yolo2coco.py --root_dir $ROOT_PATH ` ，然后就能看见生成的 `annotations` 文件夹。
 
 **参数说明**
 - `--root_path` 输入根目录`$ROOT_PATH`的位置。
-- `--random_split`  为划分参数，如果没有这个参数则只保存`train.json`文件。若指定`--random_split`参数，则输出在`annotations`文件夹下包含 `train.json` `val.json` `test.json` （默认随机划分成8:1:1）
-- `--save_path` 如果不进行随机划分，可利用此参数指定输出文件的名字，默认保存为`train.json`
-
+- `--save_path` 如果不进行数据集划分，可利用此参数指定输出文件的名字，默认保存为`train.json`
+- `--random_split`  随机划分参数，若指定`--random_split`参数，则输出在`annotations`文件夹下包含 `train.json` `val.json` `test.json` （默认随机划分成8:1:1）
+- `--split_by_file` 自定义数据集划分，若指定`--split_by_file`参数，则输出在`annotations`文件夹 `train.json` `val.json` `test.json`。需要在`$ROOT_PATH`文件下有 `./train.txt ./val.txt ./test.txt` ，可以这3个文件来定义训练集、验证集、测试集。**注意**， 这里里面填写的应是图片文件名字，而不是图片的绝对地址。（在line 43也自行可以修改一下读取方式，为了方便起见，不推荐把图片放在不同位置） 
 
 
 ## coco2yolo.py
