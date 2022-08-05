@@ -48,7 +48,7 @@ Useful tools for computer vision/deep learning.
 
 
 ## zeroshot_retrieval_evaluation.ipynb
-- 检索，支持一对多检索。
+- 检索topN的计算，支持一对多检索。（一张图对应有多个captions）
 
 ## dataset_mean_var.py
 
