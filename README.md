@@ -47,6 +47,8 @@ Useful tools for computer vision/deep learning.
 - `$JSON_FILE_PATH`是输出目录（默认为工作目录下的`./labels`目录。
 
 
+## zeroshot_retrieval_evaluation.ipynb
+- 检索，支持一对多检索。
 
 ## dataset_mean_var.py
 
