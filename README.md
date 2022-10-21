@@ -1,13 +1,8 @@
 <h2 align="center">
-Useful tools for computer vision/deep learning.
-</h2>
-<h4 align="center">
-    <p><b>简体中文</b> | <a href="https://github.com/Weifeng-Chen/DL_tools/blob/main/README_EN.md">English</a><p>
-</h4>
+Some Scripts For DEEP LEARNING
 
-# Usage
+# 1. detection 
 ## yolo2coco.py
-
 将yolo格式数据集修改成coco格式。`$ROOT_PATH`是根目录，需要按下面的形式组织数据：
 
 ```bash
@@ -50,25 +45,7 @@ Useful tools for computer vision/deep learning.
 ## zeroshot_retrieval_evaluation.ipynb
 - 检索topN的计算，支持一对多检索。（一张图对应有多个captions）
 
-## dataset_mean_var.py
-
-执行：`python yolo2coco.py --file_path $IMAGE_PATH --step $INTERVAL`
-
-- --file_path 输入图片地址。
-- --step 可选，默认为1，选择图片的间隔，如间隔为10，则只计算1/10。
-
-
-
-## split_yolo_dataset.py
-
-随机划分数据集（yolo数据格式的划分），按`train:val:test = 8:1:1`保存。
-
-执行：`python split_dataset_yolo.py --root_path $ROOT_PATH`
-
-
-
 ## vis_yolo_gt_dt.py
-
 同时把GT和预测结果可视化在同一张图中。`$DT_DIR`是预测结果标签地址，必须是和GT同名的标签。`$ROOT_PATH`文件目录：
 
 ```bash
@@ -97,22 +74,10 @@ Useful tools for computer vision/deep learning.
 - `--dt` 同样检测网络生成的预测，使用cocoapi中`loadRes`来加载，所以需要有相应格式的检测结果。
 - `--yolov5` 将官方代码中生成的结果转换成适配cocoapi的结果。
 
-
-
-## cat_img.py
-
-左右拼接2个文件夹下同名的图片，方便可视化对比模型的效果。
-
-
-
-## grid_extract.py
-
-1. 网格化输出各个位置目标的分布情况。
-2. 依据条件提取特定区域的样本。
-
-
-
-## voc2coco_rotate.py
-
-将旋转框的VOC标注转为COCO格式的。（范围为0~pi）
-
+# 2. Image-Text
+## zeroshot_retrieval_evalution.ipynb
+检索模型的评估指标。（topK召回率），支持多对多的情况。（比如一个文本匹配多张图片）
+## zero_filter.py
+基于zero数据集，用CLIP来对图文对进行打分，进行数据的粗筛。
+## zero_reader.py
+基于filter的筛选结果，传入阈值thres来截断读取分值高的数据。（多进程并行读取数据）
