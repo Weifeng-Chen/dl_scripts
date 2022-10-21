@@ -5,8 +5,6 @@ from pycocotools.cocoeval import COCOeval
 import os
 import time
 
-
-
 def transform_yolov5_result(result, filename2id):
     f = open(result ,'r',encoding='utf-8')
     dts = json.load(f)
