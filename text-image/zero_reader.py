@@ -76,4 +76,5 @@ def process_pool_read_txt_dataset(input_root=None, tokenizer=None, thres=0.2):
 
 root_path = "/cognitive_comp/chenweifeng/zero23m_cwf"
 tokenizer = BertTokenizer.from_pretrained("IDEA-CCNL/Taiyi-CLIP-RoBERTa-102M-ViT-L-Chinese", model_max_length=512)
-dataset = process_pool_read_txt_dataset(root_path, tokenizer, thres=0.20)
+dataset = process_pool_read_txt_dataset(root_path, tokenizer, thres=0.25)
+print(len(dataset))
