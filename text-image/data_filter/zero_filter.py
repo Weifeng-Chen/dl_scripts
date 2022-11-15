@@ -11,6 +11,16 @@ import open_clip
 import numpy as np
 from transformers import BertTokenizer
 
+
+parser = argparse.ArgumentParser(description="Simple example of a training script.")
+parser.add_argument(
+    "--part",
+    type=int,
+    default=0,
+    required=True,
+)
+args = parser.parse_args()
+
 # 添加Json数据集读取，主要是针对Zero23m数据集。
 class JsonDataset(Dataset):
     def __init__(self, foloder_name, tokenizer, image_transform = None, size=512, center_crop=False):
@@ -63,7 +73,7 @@ root_path = "/cognitive_comp/chenweifeng/zero23m_cwf"
 
 all_folders = sorted(os.listdir(root_path))
 
-for i in range(len(tqdm(all_folders))):    
+for i in range(len(all_folders)*args.part//4, len(all_folders)*(args.part+1)//4):
     each_folder_path = os.path.join(root_path, all_folders[i])
     dataset = JsonDataset(each_folder_path, tokenizer, image_transform=processor)
     # print(dataset[0])
