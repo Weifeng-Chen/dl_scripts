@@ -10,7 +10,68 @@ from transformers import BertModel
 import open_clip
 import numpy as np
 from transformers import BertTokenizer
+import pytorch_lightning as pl
+import torch.nn as nn
+import argparse
 
+# if you changed the MLP architecture during training, change it also here:
+class MLP(pl.LightningModule):
+    def __init__(self, input_size, xcol='emb', ycol='avg_rating'):
+        super().__init__()
+        self.input_size = input_size
+        self.xcol = xcol
+        self.ycol = ycol
+        self.layers = nn.Sequential(
+            nn.Linear(self.input_size, 1024),
+            #nn.ReLU(),
+            nn.Dropout(0.2),
+            nn.Linear(1024, 128),
+            #nn.ReLU(),
+            nn.Dropout(0.2),
+            nn.Linear(128, 64),
+            #nn.ReLU(),
+            nn.Dropout(0.1),
+
+            nn.Linear(64, 16),
+            #nn.ReLU(),
+
+            nn.Linear(16, 1)
+        )
+
+    def forward(self, x):
+        return self.layers(x)
+
+    def training_step(self, batch, batch_idx):
+            x = batch[self.xcol]
+            y = batch[self.ycol].reshape(-1, 1)
+            x_hat = self.layers(x)
+            loss = F.mse_loss(x_hat, y)
+            return loss
+    
+    def validation_step(self, batch, batch_idx):
+        x = batch[self.xcol]
+        y = batch[self.ycol].reshape(-1, 1)
+        x_hat = self.layers(x)
+        loss = F.mse_loss(x_hat, y)
+        return loss
+
+    def configure_optimizers(self):
+        optimizer = torch.optim.Adam(self.parameters(), lr=1e-3)
+        return optimizer
+
+def normalized(a, axis=-1, order=2):
+    import numpy as np  # pylint: disable=import-outside-toplevel
+
+    l2 = np.atleast_1d(np.linalg.norm(a, order, axis))
+    l2[l2 == 0] = 1
+    return a / np.expand_dims(l2, axis)
+
+
+amodel = MLP(768)  # CLIP embedding dim is 768 for CLIP ViT L 14
+s = torch.load("/cognitive_comp/chenweifeng/project/dl_scripts/text-image/data_filter/improved-aesthetic-predictor/ava+logos-l14-linearMSE.pth")   # load the model you trained previously or the model available in this repo
+amodel.load_state_dict(s)
+amodel.to("cuda")
+amodel.eval()
 
 parser = argparse.ArgumentParser(description="Simple example of a training script.")
 parser.add_argument(
@@ -76,8 +137,7 @@ all_folders = sorted(os.listdir(root_path))
 for i in range(len(all_folders)*args.part//4, len(all_folders)*(args.part+1)//4):
     each_folder_path = os.path.join(root_path, all_folders[i])
     dataset = JsonDataset(each_folder_path, tokenizer, image_transform=processor)
-    # print(dataset[0])
-    dataloader = torch.utils.data.DataLoader(dataset, batch_size=512, shuffle=False, num_workers=8, pin_memory=True)
+    dataloader = torch.utils.data.DataLoader(dataset, batch_size=512, shuffle=False, num_workers=8, pin_memory=False)
     # score_pd = pd.DataFrame(columns=['image_path', 'score'])
 
     image_paths = []
@@ -86,21 +146,18 @@ for i in range(len(all_folders)*args.part//4, len(all_folders)*(args.part+1)//4)
         # print(image.shape, text.shape)
         with torch.no_grad():
             image = image.cuda()
-            text = text.cuda()
             # print(image.shape, text.shape)
             image_features = clip_model.encode_image(image)
-            text_features = text_encoder(text)[1]
-
-            # print(image_features.shape, text_features.shape)
             # 归一化
             image_features = image_features / image_features.norm(dim=1, keepdim=True)
-            text_features = text_features / text_features.norm(dim=1, keepdim=True)
-            score_each_pair =  image_features @ text_features.t()
 
+            score = amodel(image_features,)
             image_paths.extend(image_path)
-            scores.extend(torch.diagonal(score_each_pair).detach().cpu().numpy())
+
+            # print(score.shape)
+            scores.extend(score[:, 0].detach().cpu().numpy())
             # break
-    score_pd = pd.DataFrame({'image_path': image_paths, 'score': scores})
-    score_pd.to_csv( os.path.join(root_path, all_folders[i], 'score.csv') , index=False)
-    print('saving score to', os.path.join(root_path, all_folders[i], 'score.csv'))
+    score_pd = pd.DataFrame({'image_path': image_paths, 'aesthestic_score': scores})
+    score_pd.to_csv( os.path.join(root_path, all_folders[i], 'aesthestic_score.csv') , index=False)
+    print('saving score to', os.path.join(root_path, all_folders[i], 'aesthestic_score.csv'))
    

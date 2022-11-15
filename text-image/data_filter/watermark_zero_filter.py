@@ -1,16 +1,18 @@
 # %%
 from torch.utils.data import Dataset, ConcatDataset
-from torchvision import transforms
+import pandas as pd
+from tqdm import tqdm
+import argparse
+import timm
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.utils.data
+from torchvision import transforms as T
+from transformers import BertTokenizer
 import os
 from PIL import Image
-from concurrent.futures import ProcessPoolExecutor
 import json
-import torch
-from transformers import BertModel
-import open_clip
-import numpy as np
-from transformers import BertTokenizer
-
 
 parser = argparse.ArgumentParser(description="Simple example of a training script.")
 parser.add_argument(
@@ -20,6 +22,7 @@ parser.add_argument(
     required=True,
 )
 args = parser.parse_args()
+
 
 # 添加Json数据集读取，主要是针对Zero23m数据集。
 class JsonDataset(Dataset):
@@ -45,7 +48,7 @@ class JsonDataset(Dataset):
         caption_path = str(self.caption_paths[idx])
         example = {}
 
-        instance_image = Image.open(img_path)
+        instance_image = Image.open(img_path).convert('RGB')
         instance_image = self.image_transforms(instance_image)
         with open(caption_path, 'r') as f:
             caption = json.load(f)['caption']
@@ -56,28 +59,41 @@ class JsonDataset(Dataset):
         return instance_image, input_id, img_path
 
 
-# %%
-text_encoder = BertModel.from_pretrained("IDEA-CCNL/Taiyi-CLIP-RoBERTa-102M-ViT-L-Chinese").eval().cuda()
-clip_model, _, processor = open_clip.create_model_and_transforms('ViT-L-14', pretrained='openai')
-clip_model = clip_model.eval().cuda()
+# model definition
+model = timm.create_model(
+        'efficientnet_b3a', pretrained=True, num_classes=2)
+
+model.classifier = nn.Sequential(
+    # 1536 is the orginal in_features
+    nn.Linear(in_features=1536, out_features=625),
+    nn.ReLU(),  # ReLu to be the activation function
+    nn.Dropout(p=0.3),
+    nn.Linear(in_features=625, out_features=256),
+    nn.ReLU(),
+    nn.Linear(in_features=256, out_features=2),
+)
+state_dict = torch.load('/cognitive_comp/chenweifeng/project/dl_scripts/text-image/data_filter/LAION-5B-WatermarkDetection/models/watermark_model_v1.pt')
+model.load_state_dict(state_dict)
+model.eval()
+model.cuda()
+
+processor = T.Compose([
+    T.Resize((256, 256)),
+    T.ToTensor(),
+    T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+])
+
 text_tokenizer = BertTokenizer.from_pretrained("IDEA-CCNL/Taiyi-CLIP-RoBERTa-102M-ViT-L-Chinese")
-
-# %%
-import pandas as pd
-
-# %%
-from tqdm import tqdm
-
-tokenizer = BertTokenizer.from_pretrained("IDEA-CCNL/Taiyi-CLIP-RoBERTa-102M-ViT-L-Chinese", model_max_length=512)
+preprocess_fn = processor
 root_path = "/cognitive_comp/chenweifeng/zero23m_cwf"
-
 all_folders = sorted(os.listdir(root_path))
+
 
 for i in range(len(all_folders)*args.part//4, len(all_folders)*(args.part+1)//4):
     each_folder_path = os.path.join(root_path, all_folders[i])
-    dataset = JsonDataset(each_folder_path, tokenizer, image_transform=processor)
+    dataset = JsonDataset(each_folder_path, text_tokenizer, image_transform=processor)
     # print(dataset[0])
-    dataloader = torch.utils.data.DataLoader(dataset, batch_size=512, shuffle=False, num_workers=8, pin_memory=True)
+    dataloader = torch.utils.data.DataLoader(dataset, batch_size=512, shuffle=False, num_workers=8, pin_memory=False)
     # score_pd = pd.DataFrame(columns=['image_path', 'score'])
 
     image_paths = []
@@ -86,21 +102,11 @@ for i in range(len(all_folders)*args.part//4, len(all_folders)*(args.part+1)//4)
         # print(image.shape, text.shape)
         with torch.no_grad():
             image = image.cuda()
-            text = text.cuda()
-            # print(image.shape, text.shape)
-            image_features = clip_model.encode_image(image)
-            text_features = text_encoder(text)[1]
-
-            # print(image_features.shape, text_features.shape)
-            # 归一化
-            image_features = image_features / image_features.norm(dim=1, keepdim=True)
-            text_features = text_features / text_features.norm(dim=1, keepdim=True)
-            score_each_pair =  image_features @ text_features.t()
-
+            pred = model(image)
+            is_watermark_outputs = F.softmax(pred, dim=1)[:,0].detach().cpu().numpy().tolist()
             image_paths.extend(image_path)
-            scores.extend(torch.diagonal(score_each_pair).detach().cpu().numpy())
-            # break
-    score_pd = pd.DataFrame({'image_path': image_paths, 'score': scores})
-    score_pd.to_csv( os.path.join(root_path, all_folders[i], 'score.csv') , index=False)
-    print('saving score to', os.path.join(root_path, all_folders[i], 'score.csv'))
-   
+            scores.extend(is_watermark_outputs)
+
+    score_pd = pd.DataFrame({'image_path': image_paths, 'watermark_score': scores})
+    score_pd.to_csv( os.path.join(root_path, all_folders[i], 'watermark_score.csv') , index=False)
+    print('saving score to', os.path.join(root_path, all_folders[i], 'watermark_score.csv'))
