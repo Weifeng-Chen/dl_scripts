@@ -66,8 +66,8 @@ def process_pool_read_csv_dataset(input_root, input_filename, thres=0.20):
 
 
 tokenizer = BertTokenizer.from_pretrained("IDEA-CCNL/Taiyi-CLIP-RoBERTa-102M-ViT-L-Chinese", model_max_length=512)
-input_filename = '/cognitive_comp/chenweifeng/project/dataset/wukong/release'   # 这里存的是csv标注地址
-input_root = '/cognitive_comp/chenweifeng/project/dataset/wukong/images'
+input_filename = './project/dataset/wukong/release'   # 这里存的是csv标注地址
+input_root = ''./project/dataset/wukong/images'
 dataset = process_pool_read_csv_dataset(input_root, input_filename, thres=0.22)
 
 print(len(dataset))

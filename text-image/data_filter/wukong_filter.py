@@ -58,9 +58,9 @@ clip_model = clip_model.eval().cuda()
 text_tokenizer = BertTokenizer.from_pretrained("IDEA-CCNL/Taiyi-CLIP-RoBERTa-102M-ViT-L-Chinese")
 
 
-input_filename = '/cognitive_comp/chenweifeng/project/dataset/wukong/release'
+input_filename = './project/dataset/wukong/release'
 preprocess_fn = processor
-input_root = '/cognitive_comp/chenweifeng/project/dataset/wukong/images'
+input_root = './project/dataset/wukong/images'
 tokenizer = text_tokenizer
 all_csvs = sorted(os.listdir(input_filename))
 
