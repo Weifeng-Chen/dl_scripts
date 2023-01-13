@@ -74,10 +74,8 @@ Some Scripts For DEEP LEARNING
 - `--dt` 同样检测网络生成的预测，使用cocoapi中`loadRes`来加载，所以需要有相应格式的检测结果。
 - `--yolov5` 将官方代码中生成的结果转换成适配cocoapi的结果。
 
-# 2. Image-Text
+# 2. text-image
 ## zeroshot_retrieval_evalution.ipynb
 检索模型的评估指标。（topK召回率），支持多对多的情况。（比如一个文本匹配多张图片）
-## text-image/fid_clip_score
+## fid_clip_score
 用于画text2image的 FID-CLIP Score曲线图。
-## data_filter
-数据过滤
