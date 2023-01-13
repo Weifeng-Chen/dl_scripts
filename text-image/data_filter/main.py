@@ -35,7 +35,7 @@ def sub_process(filter_model, each_folder_path):
 
 if __name__ == '__main__':
     # data setting
-    root_path = "/cognitive_comp/chenweifeng/project/dataset/laion_chinese_cwf/image_part01"
+    root_path = "./project/dataset/laion_chinese/image_part01"
     all_folders = sorted(os.listdir(root_path))
 
     # model setting

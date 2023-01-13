@@ -1,6 +1,4 @@
 """
-author: Wu
-https://github.com/Weifeng-Chen/DL_tools/issues/3
 2021/1/24
 COCO 格式的数据集转化为 YOLO 格式的数据集，源代码采取遍历方式，太慢，
 这里改进了一下时间复杂度，从O(nm)改为O(n+m)，但是牺牲了一些内存占用

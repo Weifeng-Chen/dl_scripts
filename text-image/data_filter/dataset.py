@@ -31,7 +31,7 @@ class TxtDataset(Dataset):
     
 
 if __name__ == '__main__':
-    root_path = "/cognitive_comp/chenweifeng/zero23m_cwf"
+    root_path = "./zero23m"
     all_folders = sorted(os.listdir(root_path))
 
     for each_folder in all_folders:
