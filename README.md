@@ -77,7 +77,7 @@ Some Scripts For DEEP LEARNING
 # 2. Image-Text
 ## zeroshot_retrieval_evalution.ipynb
 检索模型的评估指标。（topK召回率），支持多对多的情况。（比如一个文本匹配多张图片）
-## zero_filter.py
-基于zero数据集，用CLIP来对图文对进行打分，进行数据的粗筛。
-## zero_reader.py
-基于filter的筛选结果，传入阈值thres来截断读取分值高的数据。（多进程并行读取数据）
+## text-image/fid_clip_score
+用于画text2image的 FID-CLIP Score曲线图。
+## data_filter
+数据过滤
