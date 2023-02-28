@@ -53,7 +53,7 @@ def yolo2coco(arg):
     originLabelsDir = os.path.join(root_path, 'labels')                                        
     originImagesDir = os.path.join(root_path, 'images')
     with open(os.path.join(root_path, 'classes.txt')) as f:
-        classes = f.read().strip().split()
+        classes = [line.strip() for line in f.readlines()]
     # images dir name
     indexes = os.listdir(originImagesDir)
 
